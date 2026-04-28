@@ -6,7 +6,7 @@ config_logger()
 # abstract class Payment
 class Payment(ABC):
     @abstractmethod
-    def pay(amount: int):
+    def pay(self, amount: int):
         pass
     ###############################
     # Classes implemting method pay of abstract Payment
@@ -17,26 +17,61 @@ class CardPayment(Payment):
     def pay(self, amount: int):
         logger.info(f"credit card payment of amount {amount} USD") 
     #######################################
-    # Identification of different Payment classes - FACTORY
-FACTORY: dict[str, Payment] = {
-        "card": CardPayment,
-        "paypal": PayPalPayment
-}   
-# Factory method
-def createPayment(paymentName: str) -> Payment:
-    res: Payment|None = None
-    try:
-        res: Payment = FACTORY[paymentName]()
-        logger.debug(f"{paymentName} class instance is returned")
-    except KeyError:
-        logger.error(f"{paymentName} not implemented as Payment class")
-    return res 
-################################################################
-# creating Payment 
-paymentName: str =  getenv("PAYMENT_TYPE") 
-payment: Payment = createPayment(paymentName) 
-############################################################
-# using in many code lines
-payment.pay(500)
+# abstract class Risk
+class Risk(ABC):
+    @abstractmethod
+    def score(self)->float:
+        pass
+ ##################################################
+ # different Risk implementations
+class RiskPaypal(Risk) :
+    def score(self)->float:
+        logger.debug("computing risk for PayPal payments")
+        return 0.02
+class RiskCreditCard(Risk):
+    def score(self)->float:
+        logger.debug("computing risk for Credit card payments")
+        return 0.035
+#########################################################
+# Abstract Factory
+class PaymentFactory(ABC):
+    @abstractmethod
+    def payment(self)-> Payment :
+        pass
+    @abstractmethod
+    def risk(self) -> Risk:
+        pass   
+#############################################################
+# Factory implementations
+class PayPalPaymentFactory(PaymentFactory):
+    def payment(self)-> Payment:
+        return PayPalPayment()
+    def risk(self)->Risk:
+        return RiskPaypal()
+class CardPaymentFactory(PaymentFactory):
+    def payment(self)-> Payment:
+        return CardPayment()
+    def risk(self)->Risk:
+        return RiskCreditCard()   
+ #######################################################
+ # functionality  
+def checkout(paymentFactory: PaymentFactory, amount):
+    payment: Payment = paymentFactory.payment() 
+    risk: Risk = paymentFactory.risk()
+    score = risk.score()
+    if amount > 1000 and  score >= 0.03:
+        logger.error(f"for {amount} USD risk should be less than {score}")
+        raise ValueError(f"for {amount} USD risk should be less than {score}")
+    payment.pay(amount)
+              
+#################################################################
+# usage
+try:
+    checkout(PayPalPaymentFactory(), 5000)
+except ValueError:
+    pass    
+
+      
+  
        
                    
