@@ -2,12 +2,12 @@ from loguru import logger
 from logging_config import config_logger
 from typing import Any
 config_logger()
-def variadic_fun(*args:Any):
+def key_fun(**empl):
     '''
-    any number of arguments at a function call
-    args - paramter dersignating tuple with arguments
+    empl parameter disgnates dict
+    at function call, key argiments shoyld be passed
     '''
-    logger.info(args)
-
-variadic_fun()  # no arguments - empty tuple
-variadic_fun("abc", 10, [1, 2,3], ("a", 1))  
+    logger.debug(empl)
+    
+key_fun() 
+key_fun(id=1, name="Vasya")   
