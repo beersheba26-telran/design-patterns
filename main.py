@@ -1,34 +1,34 @@
 from loguru import logger
 from logging_config import config_logger
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
+'''
+migartion from legacy interface to a new one
+'''
 
-config_logger()
-@dataclass
-class Report:
-    title: str
-    body: str
-    footer: str
-class ReportBuilder:
-    def __init__(self):
-        self.tl = ""
-        self.bd = "" 
-        self.ft = ""
-    def title(self, title: str):
-        self.tl = title 
-        return self 
-    def body(self, body: str):
-        self.bd = body
-        return self
-    def footer(self, footer: str):
-        self.ft = footer 
-        return self
-    def build(self) -> Report:
-        #validating field values with possible raising exceptions in case of invalid report values
-        return Report(title=self.tl, body=self.bd, footer=self.ft)
-report = ReportBuilder().body("report body").title("report title").footer("report footer").build()    
-logger.info(report)
-logger.debug(str(report))
+
+#####################################
+# leagacy interface and implementation
+class LegacyLogger(ABC):
+    @abstractmethod
+    def print_message(self, message: str):
+        pass
+
+class RegularPrint(LegacyLogger): 
+    def print_message(self, message: str) :
+        logger.debug(f"method print from legacy logger is called with message {message}")
+        print(message) 
+#########################################
+# new interface and adapter pattern implementation
+class NewLogger(ABC):
+    @abstractmethod
+    def info(self, message: str) :
+        pass 
+class AdapterLogger(NewLogger) :
+    def __init__(self,legacyLogger: LegacyLogger) :
+        self.__legacyLogger = legacyLogger 
+    def info(self, message: str) :
+        self.__legacyLogger.print_message(message) 
+###################################################
+adapterLogger = AdapterLogger(RegularPrint())
+adapterLogger.info("kuku")
                
-                 
-
-    
