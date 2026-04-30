@@ -1,18 +1,19 @@
-from loguru import logger
-from logging_config import config_logger
-from time import perf_counter
-from log_decorator import log
+from cache_decorator import cache
 from timing_decorator import timing
-config_logger()
-@log(level="DEBUG")
-@timing(100)
-def arithmetic_progression(length: int):
-    '''
-    computes arithmetic progression sum of a given length
-    '''
-    
-    return sum(range(length)) 
 
-print(arithmetic_progression(1_000_000))
-logger.info(arithmetic_progression.__doc__)
+@timing(1)
+@cache(maxsize=3)
+def arithmetic_progression(length: int):
+    return sum(range(length))
+
+arithmetic_progression(50_000_000)
+arithmetic_progression(50_000_000)
+arithmetic_progression(10_000_000)
+arithmetic_progression(10_000_000)
+arithmetic_progression(60_000_000)
+arithmetic_progression(60_000_000)
+arithmetic_progression(70_000_000)
+arithmetic_progression(70_000_000)
+arithmetic_progression(50_000_000)
+arithmetic_progression(50_000_000)
 
