@@ -6,4 +6,4 @@ def salaried(empl: Employee, payment: EmployeePayment) -> float:
 def hours(empl: Employee, payment: EmployeePayment) -> float:
     return salaried(empl, payment) + payment.hours * payment.wage
 def sales(empl: Employee, payment: EmployeePayment) -> float: 
-    return hours(empl, payment) + payment.commisions * sales
+    return hours(empl, payment) + payment.commisions * payment.sales
