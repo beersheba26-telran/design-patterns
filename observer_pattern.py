@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from loguru import logger
 import weakref
 class Subject(ABC):
     @abstractmethod
@@ -16,13 +17,13 @@ class NewsAgency(Observer) :
     def __init__(self, name:str):
         self.__name = name
     def update(self, subject: Subject):
-        print(f"received {subject.message()} for {self.__name} agency")
+        logger.info(f"received {subject.message()} for {self.__name} agency")
          
 class EmailNotification(Observer):
     def __init__(self, *emails:str):
         self.__emails = list(emails) 
     def update(self, subject: Subject):
-        print(f" {subject.message()} has been sent to {self.__emails}")  
+        logger.info(f" {subject.message()} has been sent to {self.__emails}")  
 class NewsPublisher(Subject):
     __observers: list[weakref.ReferenceType[Observer]]
     def __init__(self):
