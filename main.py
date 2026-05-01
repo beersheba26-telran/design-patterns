@@ -1,13 +1,10 @@
-from observer_pattern import NewsAgency, EmailNotification, NewsPublisher
+from loguru import logger
+from composite_nodes import Text, Group
 from logging_config import config_logger
 config_logger()
-newsCNN = NewsAgency("CNN")
-newsBBC = NewsAgency("BBC")
-emailNotification = EmailNotification("yuri@gmail.com", "david@tel-ran.co.il")
-newsPublisher = NewsPublisher()
-newsPublisher.subscribe(newsCNN)
-newsPublisher.subscribe(newsBBC)
-newsPublisher.subscribe(emailNotification)
-newsPublisher.notify("Breaking news")
-del newsBBC
-newsPublisher.notify("Good news")
+text1: Text = Text("Hello ")
+text2: Text = Text("World")
+text3: Text = Text("!!!")
+group1: Group = Group(text2, text3)
+group2: Group = Group(text1, group1)
+logger.info(group2.render())
