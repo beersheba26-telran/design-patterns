@@ -1,0 +1,1 @@
+experience_wage_commissions = None #TODO think of the data structure to hold the experience based data for the wage, commissions and sales of each employee for the current month
